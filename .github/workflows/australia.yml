@@ -32,5 +32,36 @@ jobs:
     - name: Create geojson
       run: |
         ./bin/convert_geojson
+        mv tmp/AUS.geojson AUS.geojson
         ls tmp
         ls
+    - name: Archive AUS geojson as artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: aus-geojsonseq
+        path: AUS.geojson
+          
+  mbtiles:
+    runs-on: ubuntu-latest
+    container: klokantech/tippecanoe
+    needs:
+      - checkout_dl
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Download AUS geojson from artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: aus-geojsonseq
+      - name: Generate mbtiles
+        id: download
+        env:
+          DL_PATH: ${{github.event.inputs.url}}
+        run: |
+          ls -l
+          tippecanoe -zg -o AUS.mbtiles --drop-densest-as-needed AUS.geojson
+      - name: Archive AUS mbtiles as artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: aus-mbtiles
+          path: AUS.mbtiles
