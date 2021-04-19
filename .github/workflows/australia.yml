@@ -56,7 +56,7 @@ jobs:
         run: |
           ls -l
           gunzip AUS.geojson.gz
-          tippecanoe -zg -o AUS.mbtiles --drop-densest-as-needed AUS.geojson
+          tippecanoe -zg -o AUS.mbtiles -l "localities" -n "Suburbs and localities" -A "&copy; Geoscape Australia (CC BY 4.0)" --drop-densest-as-needed AUS.geojson
           gzip AUS.mbtiles
       - name: Archive AUS mbtiles as artifacts
         uses: actions/upload-artifact@v2
