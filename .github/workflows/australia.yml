@@ -1,0 +1,27 @@
+name: Generate AU Localities
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: 'URL to localities data'
+        required: true
+        default: 'https://data.gov.au/data/dataset/bdcf5b09-89bc-47ec-9281-6b8e9ee147aa/resource/cec25f3c-ddf6-42fc-8c3c-a53df81b90bd/download/suburbs-localities-february-2021.zip'
+      # home:
+      #   description: 'location'
+      #   required: false
+      #   default: 'The Octoverse'
+
+jobs:
+  checkout_dl:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Download
+      id: download
+      env:
+        DL_PATH: ${{github.event.inputs.url}}
+      run: |
+        curl $DL_PATH > data.zip
+        unzip data.zip
+        ls -l
