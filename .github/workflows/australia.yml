@@ -6,10 +6,6 @@ on:
         description: 'URL to localities data'
         required: true
         default: 'https://data.gov.au/data/dataset/bdcf5b09-89bc-47ec-9281-6b8e9ee147aa/resource/cec25f3c-ddf6-42fc-8c3c-a53df81b90bd/download/suburbs-localities-february-2021.zip'
-      # home:
-      #   description: 'location'
-      #   required: false
-      #   default: 'The Octoverse'
 
 jobs:
   checkout_dl:
@@ -33,13 +29,13 @@ jobs:
       run: |
         ./bin/convert_geojson
         mv tmp/AUS.geojson AUS.geojson
-        ls tmp
-        ls
+        gzip AUS.geojson
+        ls -l
     - name: Archive AUS geojson as artifacts
       uses: actions/upload-artifact@v2
       with:
         name: aus-geojsonseq
-        path: AUS.geojson
+        path: AUS.geojson.gz
           
   mbtiles:
     runs-on: ubuntu-latest
@@ -59,9 +55,11 @@ jobs:
           DL_PATH: ${{github.event.inputs.url}}
         run: |
           ls -l
+          gunzip AUS.geojson.gz
           tippecanoe -zg -o AUS.mbtiles --drop-densest-as-needed AUS.geojson
+          gzip AUS.mbtiles
       - name: Archive AUS mbtiles as artifacts
         uses: actions/upload-artifact@v2
         with:
           name: aus-mbtiles
-          path: AUS.mbtiles
+          path: AUS.mbtiles.gz
