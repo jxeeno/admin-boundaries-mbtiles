@@ -25,3 +25,14 @@ jobs:
         curl $DL_PATH > data.zip
         unzip data.zip
         ls -l
+        mkdir tmp
+        mv Suburbs*/Standard/* tmp/
+  ogr2ogr:
+    runs-on: ubuntu-latest
+    container: osgeo/gdal:alpine-ultrasmall-latest
+    steps:
+    - name: Create geojson
+      run: |
+        ./bin/convert_geojson
+        ls tmp
+        ls
