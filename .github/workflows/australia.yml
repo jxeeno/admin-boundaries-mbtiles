@@ -62,7 +62,7 @@ jobs:
           gunzip -k AUS.geojson.gz
           tippecanoe -zg -o AUS.mbtiles -l "localities" -n "Suburbs and localities" -A "&copy; Geoscape Australia (CC BY 4.0)" --drop-densest-as-needed AUS.geojson
           gzip AUS.mbtiles
-          
+
       - name: Archive AUS mbtiles as artifacts
         uses: actions/upload-artifact@v2
         with:
@@ -75,6 +75,6 @@ jobs:
           files: |
             AUS.mbtiles.gz
             AUS.geojson.gz
-          tag_name: 
+          tag_name: ${{github.event.inputs.tag}}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
