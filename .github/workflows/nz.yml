@@ -5,11 +5,11 @@ on:
       url:
         description: 'URL to localities data'
         required: true
-        default: 'https://data.gov.au/data/dataset/bdcf5b09-89bc-47ec-9281-6b8e9ee147aa/resource/cec25f3c-ddf6-42fc-8c3c-a53df81b90bd/download/suburbs-localities-february-2021.zip'
+        default: 'https://github.com/jxeeno/linz-fire-emergency-nz-localities/releases/download/2021-04/lds-fire-and-emergency-nz-localities-SHP.zip'
       tag:
         description: 'Release tag'
         required: true
-        default: '2021-02'
+        default: '2021-04'
 
 jobs:
   checkout_dl:
@@ -25,21 +25,20 @@ jobs:
       run: |
         apk add curl unzip
         curl $DL_PATH > data.zip
-        unzip data.zip
-        ls -l
         mkdir tmp
-        mv Suburbs*/Standard/* tmp/
+        unzip data.zip -d tmp/
+        ls -l tmp/
     - name: Create geojson
       run: |
-        ./bin/convert_geojson_au
-        mv tmp/AUS.geojson AUS.geojson
-        gzip AUS.geojson
+        ./bin/convert_geojson_nz
+        mv tmp/NZ.geojson NZ.geojson
+        gzip NZ.geojson
         ls -l
-    - name: Archive AUS geojson as artifacts
+    - name: Archive NZ geojson as artifacts
       uses: actions/upload-artifact@v2
       with:
-        name: aus-geojsonseq
-        path: AUS.geojson.gz
+        name: nz-geojsonseq
+        path: NZ.geojson.gz
           
   mbtiles:
     runs-on: ubuntu-latest
@@ -49,32 +48,32 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Download AUS geojson from artifacts
+      - name: Download NZ geojson from artifacts
         uses: actions/download-artifact@v2
         with:
-          name: aus-geojsonseq
+          name: nz-geojsonseq
       - name: Generate mbtiles
         id: download
         env:
           DL_PATH: ${{github.event.inputs.url}}
         run: |
           ls -l
-          gunzip -k AUS.geojson.gz
-          tippecanoe -zg -ab -o AUS.mbtiles -l "localities" -n "Suburbs and localities" -A "&copy; Geoscape Australia (CC BY 4.0)" --drop-densest-as-needed AUS.geojson
-          gzip AUS.mbtiles
+          gunzip -k NZ.geojson.gz
+          tippecanoe -zg -ab -o NZ.mbtiles -l "localities" -n "NZ localities" -A "&copy; Fire and Emergency NZ (CC BY 4.0)" --drop-densest-as-needed NZ.geojson
+          gzip NZ.mbtiles
 
-      - name: Archive AUS mbtiles as artifacts
+      - name: Archive NZ mbtiles as artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: aus-mbtiles
-          path: AUS.mbtiles.gz
+          name: nz-mbtiles
+          path: NZ.mbtiles.gz
 
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            AUS.mbtiles.gz
-            AUS.geojson.gz
+            NZ.mbtiles.gz
+            NZ.geojson.gz
           tag_name: ${{github.event.inputs.tag}}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

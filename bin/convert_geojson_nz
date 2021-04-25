@@ -1,0 +1,3 @@
+#!/bin/sh
+cd tmp
+ogr2ogr -f GeoJSONSeq -t_srs crs:84 NZ.geojson fire-and-emergency-nz-localities.shp
