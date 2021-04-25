@@ -24,7 +24,7 @@ jobs:
         DL_PATH: ${{github.event.inputs.url}}
       run: |
         apk add curl unzip
-        curl $DL_PATH > data.zip
+        curl -L $DL_PATH > data.zip
         mkdir tmp
         unzip data.zip -d tmp/
         ls -l tmp/
