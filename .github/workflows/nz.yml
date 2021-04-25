@@ -1,4 +1,4 @@
-name: Generate AU Localities
+name: Generate NZ Localities
 on:
   workflow_dispatch:
     inputs:
