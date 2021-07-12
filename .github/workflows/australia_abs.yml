@@ -24,11 +24,11 @@ jobs:
         DL_PATH: ${{github.event.inputs.url}}
       run: |
         apk add curl unzip
-        curl -L $DL_PATH > data.zip
-        unzip data.zip
-        ls -l
         mkdir tmp
-        mv *_shp/* tmp/
+        curl -L $DL_PATH > data.zip
+        unzip data.zip -d tmp/
+        ls -l
+        ls -l tmp/
     - name: Create geojson
       run: |
         ./bin/convert_geojson_au_abs
