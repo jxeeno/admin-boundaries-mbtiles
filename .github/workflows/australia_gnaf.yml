@@ -26,7 +26,7 @@ jobs:
         apk add curl unzip sqlite3
         mkdir tmp
         curl -L $DL_PATH > data.zip
-        unzip tmp/
+        unzip data.zip
         mv *_GNAF_*/G-NAF/G-NAF*/Standard tmp/standard
         mv *_GNAF_*/G-NAF/G-NAF*/Authority* tmp/authority
     - name: Create sqlite
