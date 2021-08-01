@@ -34,14 +34,21 @@ jobs:
         ls -l
         ./bin/gnafall
         ls -l
-        gzip gnaf.*.sqlite
-        gzip gnaf.*.geojson
+        gzip gnaf.*.sqlite &
+        gzip gnaf.*.geojson &
+        gzip gnaf.*.gpkg &
+        wait
         ls -l
     - name: Archive GNAF geojson as artifacts
       uses: actions/upload-artifact@v2
       with:
         name: ausgnaf-geojsonseq
         path: gnaf.*.geojson.gz
+    - name: Archive GNAF geopackage as artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: ausgnaf-gpkg
+        path: gnaf.*.gpkg.gz
     - name: Archive GNAF sqlite as artifacts
       uses: actions/upload-artifact@v2
       with:
@@ -60,19 +67,24 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: ausgnaf-geojsonseq
-      - name: Download AUS geojson from artifacts
+      - name: Download AUS sqlite from artifacts
         uses: actions/download-artifact@v2
         with:
           name: ausgnaf-sqlite
+      - name: Download AUS gpkg from artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: ausgnaf-gpkg
       - name: Generate mbtiles
         id: download
         env:
           DL_PATH: ${{github.event.inputs.url}}
         run: |
           ls -l
-          bin/generate_geojson_gnaf ACT &
-          bin/generate_geojson_gnaf NT &
-          bin/generate_geojson_gnaf TAS &
+          bin/generate_mbtiles_gnaf ACT &
+          bin/generate_mbtiles_gnaf NT &
+          bin/generate_mbtiles_gnaf TAS &
+          bin/generate_mbtiles_gnaf NSW &
           wait
       - name: Archive AUS mbtiles as artifacts
         uses: actions/upload-artifact@v2
@@ -87,12 +99,19 @@ jobs:
             gnaf.ACT.mbtiles.gz
             gnaf.NT.mbtiles.gz
             gnaf.TAS.mbtiles.gz
+            gnaf.NSW.mbtiles.gz
             gnaf.ACT.geojson.gz
             gnaf.NT.geojson.gz
             gnaf.TAS.geojson.gz
+            gnaf.NSW.geojson.gz
             gnaf.ACT.sqlite.gz
             gnaf.NT.sqlite.gz
             gnaf.TAS.sqlite.gz
+            gnaf.NSW.sqlite.gz
+            gnaf.ACT.gpkg.gz
+            gnaf.NT.gpkg.gz
+            gnaf.TAS.gpkg.gz
+            gnaf.NSW.gpkg.gz
           tag_name: ${{github.event.inputs.tag}}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

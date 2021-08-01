@@ -2,4 +2,5 @@
 ./bin/gnaf ACT &
 ./bin/gnaf NT &
 ./bin/gnaf TAS &
+./bin/gnaf NSW &
 wait
