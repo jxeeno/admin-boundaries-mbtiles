@@ -23,7 +23,7 @@ jobs:
       env:
         DL_PATH: ${{github.event.inputs.url}}
       run: |
-        apk add curl unzip sqlite3
+        apk add curl unzip sqlite
         mkdir tmp
         curl -L $DL_PATH > data.zip
         unzip data.zip
