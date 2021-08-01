@@ -29,60 +29,64 @@ jobs:
         unzip data.zip
         mv *_GNAF_*/G-NAF/G-NAF*/Standard tmp/standard
         mv *_GNAF_*/G-NAF/G-NAF*/Authority* tmp/authority
-    - name: Create sqlite
+    - name: Create sqlite and geojson
       run: |
         ./bin/gnaf
+        ./bin/convert_geojson_gnaf
         ls -l
         gzip gnaf.sqlite
+        gzip gnaf.geojson
         ls -l
-    - name: Release
-      uses: softprops/action-gh-release@v1
+    - name: Archive GNAF geojson as artifacts
+      uses: actions/upload-artifact@v2
       with:
-        files: |
-          gnaf.sqlite.gz
-        tag_name: ${{github.event.inputs.tag}}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #   - name: Archive AUS geojson as artifacts
-  #     uses: actions/upload-artifact@v2
-  #     with:
-  #       name: auspoa-geojsonseq
-  #       path: AUSPOA.geojson.gz
+        name: ausgnaf-geojsonseq
+        path: gnaf.geojson.gz
+    - name: Archive GNAF sqlite as artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: ausgnaf-sqlite
+        path: gnaf.sqlite.gz
           
-  # mbtiles:
-  #   runs-on: ubuntu-latest
-  #   container: klokantech/tippecanoe
-  #   needs:
-  #     - checkout_dl
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v2
-  #     - name: Download AUS geojson from artifacts
-  #       uses: actions/download-artifact@v2
-  #       with:
-  #         name: auspoa-geojsonseq
-  #     - name: Generate mbtiles
-  #       id: download
-  #       env:
-  #         DL_PATH: ${{github.event.inputs.url}}
-  #       run: |
-  #         ls -l
-  #         gunzip -k AUSPOA.geojson.gz
-  #         tippecanoe -zg -ab -o AUSPOA.mbtiles -l "au_abspoa" -n "ABS Postal Areas" -A "&copy; Australian Bureau of Statistics" --drop-densest-as-needed AUSPOA.geojson
-  #         gzip AUSPOA.mbtiles
+  mbtiles:
+    runs-on: ubuntu-latest
+    container: klokantech/tippecanoe
+    needs:
+      - checkout_dl
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Download AUS geojson from artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: ausgnaf-geojsonseq
+      - name: Download AUS geojson from artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: ausgnaf-sqlite
+      - name: Generate mbtiles
+        id: download
+        env:
+          DL_PATH: ${{github.event.inputs.url}}
+        run: |
+          ls -l
+          gunzip -k gnaf.geojson.gz
+          tippecanoe -zg -ab -o gnaf.mbtiles -l "au_gnaf" -n "Geocoded National Address File" -A "Incorporates or developed using G-NAF © Geoscape Australia licensed by the Commonwealth of Australia under the Open Geo-coded National Address File (G-NAF) End User Licence Agreement." -z15 --read-parallel gnaf.geojson
+          gzip gnaf.mbtiles
 
-  #     - name: Archive AUS mbtiles as artifacts
-  #       uses: actions/upload-artifact@v2
-  #       with:
-  #         name: auspoa-mbtiles
-  #         path: AUSPOA.mbtiles.gz
+      - name: Archive AUS mbtiles as artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: ausgnaf-mbtiles
+          path: gnaf.mbtiles.gz
 
-  #     - name: Release
-  #       uses: softprops/action-gh-release@v1
-  #       with:
-  #         files: |
-  #           AUSPOA.mbtiles.gz
-  #           AUSPOA.geojson.gz
-  #         tag_name: ${{github.event.inputs.tag}}
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            gnaf.mbtiles.gz
+            gnaf.geojson.gz
+            gnaf.sqlite.gz
+          tag_name: ${{github.event.inputs.tag}}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
