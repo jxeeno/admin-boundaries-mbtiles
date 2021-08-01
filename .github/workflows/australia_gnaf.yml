@@ -9,12 +9,12 @@ on:
       tag:
         description: 'Release tag'
         required: true
-        default: 'GNAF-2021-05'
+        default: 'GNAF-2021-05-acttest'
 
 jobs:
   checkout_dl:
     runs-on: ubuntu-latest
-    container: osgeo/gdal:alpine-ultrasmall-latest
+    container: osgeo/gdal:alpine-small-latest
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -25,13 +25,14 @@ jobs:
       run: |
         apk add curl unzip sqlite
         mkdir tmp
-        curl -L $DL_PATH > data.zip
-        unzip data.zip
-        mv *_GNAF_*/G-NAF/G-NAF*/Standard tmp/standard
-        mv *_GNAF_*/G-NAF/G-NAF*/Authority* tmp/authority
+        curl -L https://github.com/jxeeno/admin-boundaries-mbtiles/releases/download/GNAF-2021-05/gnaf.sqlite.gz | gunzip > gnaf.sqlite
+        # curl -L $DL_PATH > data.zip
+        # unzip data.zip
+        # mv *_GNAF_*/G-NAF/G-NAF*/Standard tmp/standard
+        # mv *_GNAF_*/G-NAF/G-NAF*/Authority* tmp/authority
     - name: Create sqlite and geojson
       run: |
-        ./bin/gnaf
+        # ./bin/gnaf
         ./bin/convert_geojson_gnaf
         ls -l
         gzip gnaf.sqlite
