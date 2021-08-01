@@ -1,0 +1,80 @@
+name: Generate AU LGA
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: 'URL to LGA data'
+        required: true
+        default: 'https://www.abs.gov.au/ausstats/subscriber.nsf/log?openagent&1270055003_poa_2016_aust_shape.zip&1270.0.55.003&Data%20Cubes&4FB811FA48EECA7ACA25802C001432D0&0&July%202016&13.09.2016&Previous'
+      tag:
+        description: 'Release tag'
+        required: true
+        default: 'POA-2016'
+
+jobs:
+  checkout_dl:
+    runs-on: ubuntu-latest
+    container: osgeo/gdal:alpine-ultrasmall-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Download
+      id: download
+      env:
+        DL_PATH: ${{github.event.inputs.url}}
+      run: |
+        apk add curl unzip
+        mkdir tmp
+        curl -L $DL_PATH > data.zip
+        unzip data.zip -d tmp/
+        ls -l
+        ls -l tmp/
+    - name: Create geojson
+      run: |
+        ./bin/convert_geojson_au_abs
+        mv tmp/AUSLGA.geojson AUSPOA.geojson
+        gzip AUSPOA.geojson
+        ls -l
+    - name: Archive AUS geojson as artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: auspoa-geojsonseq
+        path: AUSPOA.geojson.gz
+          
+  mbtiles:
+    runs-on: ubuntu-latest
+    container: klokantech/tippecanoe
+    needs:
+      - checkout_dl
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Download AUS geojson from artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: auspoa-geojsonseq
+      - name: Generate mbtiles
+        id: download
+        env:
+          DL_PATH: ${{github.event.inputs.url}}
+        run: |
+          ls -l
+          gunzip -k AUSPOA.geojson.gz
+          tippecanoe -zg -ab -o AUSPOA.mbtiles -l "lga" -n "ABS Postal Areas ASGS" -A "&copy; Australian Bureau of Statistics" --drop-densest-as-needed AUSPOA.geojson
+          gzip AUSLGA.mbtiles
+
+      - name: Archive AUS mbtiles as artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: auspoa-mbtiles
+          path: AUSPOA.mbtiles.gz
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            AUSPOA.mbtiles.gz
+            AUSPOA.geojson.gz
+          tag_name: ${{github.event.inputs.tag}}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
