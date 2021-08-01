@@ -6,5 +6,5 @@ cat sql/gnaf/import_data.sql | sed "s/%%STATE%%/$1/g" | sqlite3 gnaf.$1.sqlite
 echo "Data import complete ($1)"
 ogr2ogr -f geojsonseq -dialect sqlite -sql "select ST_GeomFromText('POINT( '||longitude||' '||latitude||' )', 4326) as geom, * from ADDRESS_COMBINED_VIEW;" -t_srs crs:84 -s_srs crs:84 gnaf.$1.geojson gnaf.$1.sqlite
 echo "ogr2ogr conv to GeoJSON complete ($1)"
-ogr2ogr -f GPKG -dialect sqlite -sql "select ST_GeomFromText('POINT( '||longitude||' '||latitude||' )', 4326) as geom, * from ADDRESS_COMBINED_VIEW;" -t_srs crs:84 -s_srs crs:84 gnaf.$1.geojson gnaf.$1.gpkg
+ogr2ogr -f GPKG -dialect sqlite -sql "select ST_GeomFromText('POINT( '||longitude||' '||latitude||' )', 4326) as geom, * from ADDRESS_COMBINED_VIEW;" -t_srs crs:84 -s_srs crs:84 gnaf.$1.gpkg gnaf.$1.sqlite
 echo "ogr2ogr conv to GPKG complete ($1)"
