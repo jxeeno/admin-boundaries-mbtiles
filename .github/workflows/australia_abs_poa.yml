@@ -1,4 +1,4 @@
-name: Generate AU LGA
+name: Generate AU ABS POA
 on:
   workflow_dispatch:
     inputs:
