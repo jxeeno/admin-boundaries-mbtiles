@@ -34,7 +34,7 @@ jobs:
       run: |
         # ./bin/gnaf
         curl -L https://github.com/jxeeno/admin-boundaries-mbtiles/releases/download/GNAF-2021-05/gnaf.sqlite.gz | gunzip > gnaf.sqlite
-        ls
+        ls -l
         ./bin/convert_geojson_gnaf
         ls -l
         gzip gnaf.sqlite
