@@ -1,0 +1,4 @@
+#!/bin/sh
+./bin/gnaf ACT
+./bin/gnaf NT
+./bin/gnaf TAS

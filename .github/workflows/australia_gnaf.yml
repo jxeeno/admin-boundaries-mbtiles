@@ -25,31 +25,28 @@ jobs:
       run: |
         apk add curl unzip sqlite
         mkdir tmp
-        # curl -L https://github.com/jxeeno/admin-boundaries-mbtiles/releases/download/GNAF-2021-05/gnaf.sqlite.gz | gunzip > gnaf.sqlite
-        # curl -L $DL_PATH > data.zip
-        # unzip data.zip
-        # mv *_GNAF_*/G-NAF/G-NAF*/Standard tmp/standard
-        # mv *_GNAF_*/G-NAF/G-NAF*/Authority* tmp/authority
+        curl -L $DL_PATH > data.zip
+        unzip data.zip
+        mv *_GNAF_*/G-NAF/G-NAF*/Standard tmp/standard
+        mv *_GNAF_*/G-NAF/G-NAF*/Authority* tmp/authority
     - name: Create sqlite and geojson
       run: |
-        # ./bin/gnaf
-        curl -L https://github.com/jxeeno/admin-boundaries-mbtiles/releases/download/GNAF-2021-05/gnaf.sqlite.gz | gunzip > gnaf.sqlite
         ls -l
-        ./bin/convert_geojson_gnaf
+        ./bin/gnafall
         ls -l
-        gzip gnaf.sqlite
-        gzip gnaf.geojson
+        gzip gnaf.*.sqlite
+        gzip gnaf.*.geojson
         ls -l
     - name: Archive GNAF geojson as artifacts
       uses: actions/upload-artifact@v2
       with:
         name: ausgnaf-geojsonseq
-        path: gnaf.geojson.gz
+        path: gnaf.*.geojson.gz
     - name: Archive GNAF sqlite as artifacts
       uses: actions/upload-artifact@v2
       with:
         name: ausgnaf-sqlite
-        path: gnaf.sqlite.gz
+        path: gnaf.*.sqlite.gz
           
   mbtiles:
     runs-on: ubuntu-latest
@@ -73,23 +70,29 @@ jobs:
           DL_PATH: ${{github.event.inputs.url}}
         run: |
           ls -l
-          gunzip -k gnaf.geojson.gz
-          tippecanoe -zg -ab -o gnaf.mbtiles -l "au_gnaf" -n "Geocoded National Address File" -A "Incorporates or developed using G-NAF © Geoscape Australia licensed by the Commonwealth of Australia under the Open Geo-coded National Address File (G-NAF) End User Licence Agreement." -Z16 -z16 -pk -d --read-parallel gnaf.geojson
-          gzip gnaf.mbtiles
+          bin/generate_geojson_gnaf ACT
+          bin/generate_geojson_gnaf NT
+          bin/generate_geojson_gnaf TAS
 
       - name: Archive AUS mbtiles as artifacts
         uses: actions/upload-artifact@v2
         with:
           name: ausgnaf-mbtiles
-          path: gnaf.mbtiles.gz
+          path: gnaf.*.mbtiles.gz
 
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            gnaf.mbtiles.gz
-            gnaf.geojson.gz
-            gnaf.sqlite.gz
+            gnaf.ACT.mbtiles.gz
+            gnaf.NT.mbtiles.gz
+            gnaf.TAS.mbtiles.gz
+            gnaf.ACT.geojson.gz
+            gnaf.NT.geojson.gz
+            gnaf.TAS.geojson.gz
+            gnaf.ACT.sqlite.gz
+            gnaf.NT.sqlite.gz
+            gnaf.TAS.sqlite.gz
           tag_name: ${{github.event.inputs.tag}}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
