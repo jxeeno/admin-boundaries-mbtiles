@@ -70,10 +70,10 @@ jobs:
           DL_PATH: ${{github.event.inputs.url}}
         run: |
           ls -l
-          bin/generate_geojson_gnaf ACT
-          bin/generate_geojson_gnaf NT
-          bin/generate_geojson_gnaf TAS
-
+          bin/generate_geojson_gnaf ACT &
+          bin/generate_geojson_gnaf NT &
+          bin/generate_geojson_gnaf TAS &
+          wait
       - name: Archive AUS mbtiles as artifacts
         uses: actions/upload-artifact@v2
         with:
