@@ -2,5 +2,10 @@
 ./bin/gnaf ACT &
 ./bin/gnaf NT &
 ./bin/gnaf TAS &
+./bin/gnaf OT &
 ./bin/gnaf NSW &
+./bin/gnaf QLD &
+./bin/gnaf VIC &
+./bin/gnaf SA &
+./bin/gnaf WA &
 wait
