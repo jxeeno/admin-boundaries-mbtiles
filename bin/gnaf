@@ -1,3 +1,6 @@
 #!/bin/sh
+echo "Generating GNAF sqlite3 database"
 cat sql/gnaf/create_tables.sql | sqlite3 gnaf.sqlite
+echo "Table generation complete"
 cat sql/gnaf/import_data.sql | sqlite3 gnaf.sqlite
+echo "Data import complete"

@@ -32,6 +32,7 @@ jobs:
     - name: Create sqlite
       run: |
         ./bin/gnaf
+        ls -l
         mv gnaf.sqlite
         gzip gnaf.sqlite
         ls -l
