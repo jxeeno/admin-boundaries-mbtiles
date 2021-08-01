@@ -2,13 +2,24 @@
 
 ## Australia
 
-This repository includes workflows which generate mbtiles and GeoJSONSeq files of gazetted localities in Australia.  The workflow stores the outputs as GitHub releases for users to download as artifacts.
+This repository includes workflows which generate mbtiles and GeoJSONSeq files for:
 
-The spatial data is provided by Geoscape (https://data.gov.au/data/dataset/geoscape-administrative-boundaries) and is released under Creative Commons Licence.
+* Geoscape Administrative Boundaries (Localities)
+* Geoscape Geocoded National Address File
+* ABS Postal Areas
+* ABS Local Government Areas
+The workflow stores the outputs as GitHub releases for users to download as artifacts and releases.
+
+Administrative boundaries and GNAF are provided by Geoscape and is released under Creative Commons Licence.
+ABS Postal Areas and Local Government Area are provided by ABS and is released under Creative Commons Licence.
 
 **Spatial data licence**
 
 Incorporates or developed using Administrative Boundaries © Geoscape Australia licensed by the Commonwealth of Australia under Creative Commons Attribution 4.0 International licence (CC BY 4.0).
+
+Incorporates or developed using G-NAF © Geoscape Australia licensed by the Commonwealth of Australia under the Open Geo-coded National Address File (G-NAF) End User Licence Agreement.
+
+Based on data from Australian Bureau of Statistics
 
 ## New Zealand
 
