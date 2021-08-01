@@ -1,5 +1,7 @@
 #!/bin/sh
 cd tmp
+file gnaf.sqlite
+ogrinfo gnaf.sqlite
 ogr2ogr -f geojsonseq -dialect sqlite -sql "select ST_GeomFromText('POINT ( '||longitude||' '||latitude||' )', 4326) as geom, * from ADDRESS_VIEW;" -t_srs crs:84 -s_srs crs:84 ACT.geojson gnaf.sqlite
 cat ACT.geojson > gnaf.geojson
 # ogr2ogr -f GeoJSONSeq -sql "select shp.LC_PLY_PID as LC_PLY_PID, shp.DT_CREATE as DT_CREATE, shp.LOC_PID as LOC_PID, NAME, POSTCODE, LOCCL_CODE, STATE_PID from ACT_LOCALITY_POLYGON_shp shp JOIN 'ACT_LOCALITY_shp.dbf'.\"ACT_LOCALITY_shp\" dbf ON dbf.LOC_PID = shp.LOC_PID AND dbf.LOCCL_CODE = 'G'" -t_srs crs:84 ACT.geojson ACT_LOCALITY_POLYGON_shp.shp
