@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
     inputs:
       url:
-        description: 'URL to LGA data'
+        description: 'URL to POA data'
         required: true
         default: 'https://www.abs.gov.au/ausstats/subscriber.nsf/log?openagent&1270055003_poa_2016_aust_shape.zip&1270.0.55.003&Data%20Cubes&4FB811FA48EECA7ACA25802C001432D0&0&July%202016&13.09.2016&Previous'
       tag:
@@ -60,8 +60,8 @@ jobs:
         run: |
           ls -l
           gunzip -k AUSPOA.geojson.gz
-          tippecanoe -zg -ab -o AUSPOA.mbtiles -l "lga" -n "ABS Postal Areas ASGS" -A "&copy; Australian Bureau of Statistics" --drop-densest-as-needed AUSPOA.geojson
-          gzip AUSLGA.mbtiles
+          tippecanoe -zg -ab -o AUSPOA.mbtiles -l "au_abspoa" -n "ABS Postal Areas" -A "&copy; Australian Bureau of Statistics" --drop-densest-as-needed AUSPOA.geojson
+          gzip AUSPOA.mbtiles
 
       - name: Archive AUS mbtiles as artifacts
         uses: actions/upload-artifact@v2
