@@ -33,7 +33,6 @@ jobs:
       run: |
         ./bin/gnaf
         ls -l
-        mv gnaf.sqlite
         gzip gnaf.sqlite
         ls -l
     - name: Release
