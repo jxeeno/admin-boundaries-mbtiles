@@ -1,4 +1,4 @@
-name: Generate AU ABS POA
+name: Generate AU GNAF
 on:
   workflow_dispatch:
     inputs:
@@ -23,7 +23,7 @@ jobs:
       env:
         DL_PATH: ${{github.event.inputs.url}}
       run: |
-        apk add curl unzip
+        apk add curl unzip sqlite3
         mkdir tmp
         curl -L $DL_PATH > data.zip
         unzip tmp/
