@@ -1,5 +1,4 @@
 #!/bin/sh
-cd tmp
 file gnaf.sqlite
 ogrinfo gnaf.sqlite
 ogr2ogr -f geojsonseq -dialect sqlite -sql "select ST_GeomFromText('POINT ( '||longitude||' '||latitude||' )', 4326) as geom, * from ADDRESS_VIEW;" -t_srs crs:84 -s_srs crs:84 ACT.geojson gnaf.sqlite
