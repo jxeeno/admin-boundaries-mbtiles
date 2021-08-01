@@ -31,14 +31,9 @@ jobs:
         mv *_GNAF_*/G-NAF/G-NAF*/Authority* tmp/authority
     - name: Create sqlite and geojson
       run: |
-        ls -l
+        ls -lh
         ./bin/gnafall
-        ls -l
-        gzip gnaf.*.sqlite &
-        gzip gnaf.*.geojson &
-        gzip gnaf.*.gpkg &
-        wait
-        ls -l
+        ls -lh
     - name: Archive GNAF geojson as artifacts
       uses: actions/upload-artifact@v2
       with:
@@ -80,11 +75,16 @@ jobs:
         env:
           DL_PATH: ${{github.event.inputs.url}}
         run: |
-          ls -l
+          ls -L
           bin/generate_mbtiles_gnaf ACT &
           bin/generate_mbtiles_gnaf NT &
           bin/generate_mbtiles_gnaf TAS &
+          bin/generate_mbtiles_gnaf OT &
           bin/generate_mbtiles_gnaf NSW &
+          bin/generate_mbtiles_gnaf QLD &
+          bin/generate_mbtiles_gnaf VIC &
+          bin/generate_mbtiles_gnaf SA &
+          bin/generate_mbtiles_gnaf WA &
           wait
       - name: Archive AUS mbtiles as artifacts
         uses: actions/upload-artifact@v2
@@ -96,22 +96,33 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            gnaf.ACT.mbtiles.gz
-            gnaf.NT.mbtiles.gz
-            gnaf.TAS.mbtiles.gz
-            gnaf.NSW.mbtiles.gz
-            gnaf.ACT.geojson.gz
-            gnaf.NT.geojson.gz
-            gnaf.TAS.geojson.gz
-            gnaf.NSW.geojson.gz
             gnaf.ACT.sqlite.gz
             gnaf.NT.sqlite.gz
             gnaf.TAS.sqlite.gz
+            gnaf.OT.sqlite.gz
             gnaf.NSW.sqlite.gz
+            gnaf.QLD.sqlite.gz
+            gnaf.VIC.sqlite.gz
+            gnaf.SA.sqlite.gz
+            gnaf.WA.sqlite.gz
+            gnaf.ACT.geojson.gz
+            gnaf.NT.geojson.gz
+            gnaf.TAS.geojson.gz
+            gnaf.OT.geojson.gz
+            gnaf.NSW.geojson.gz
+            gnaf.QLD.geojson.gz
+            gnaf.VIC.geojson.gz
+            gnaf.SA.geojson.gz
+            gnaf.WA.geojson.gz
             gnaf.ACT.gpkg.gz
             gnaf.NT.gpkg.gz
             gnaf.TAS.gpkg.gz
+            gnaf.OT.gpkg.gz
             gnaf.NSW.gpkg.gz
+            gnaf.QLD.gpkg.gz
+            gnaf.VIC.gpkg.gz
+            gnaf.SA.gpkg.gz
+            gnaf.WA.gpkg.gz
           tag_name: ${{github.event.inputs.tag}}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
