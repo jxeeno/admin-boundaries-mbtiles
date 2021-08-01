@@ -74,7 +74,7 @@ jobs:
         run: |
           ls -l
           gunzip -k gnaf.geojson.gz
-          tippecanoe -zg -ab -o gnaf.mbtiles -l "au_gnaf" -n "Geocoded National Address File" -A "Incorporates or developed using G-NAF © Geoscape Australia licensed by the Commonwealth of Australia under the Open Geo-coded National Address File (G-NAF) End User Licence Agreement." -z15 --read-parallel gnaf.geojson
+          tippecanoe -zg -ab -o gnaf.mbtiles -l "au_gnaf" -n "Geocoded National Address File" -A "Incorporates or developed using G-NAF © Geoscape Australia licensed by the Commonwealth of Australia under the Open Geo-coded National Address File (G-NAF) End User Licence Agreement." -Z16 -z16 -pk -d --read-parallel gnaf.geojson
           gzip gnaf.mbtiles
 
       - name: Archive AUS mbtiles as artifacts
