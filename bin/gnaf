@@ -1,0 +1,3 @@
+#!/bin/sh
+cat sql/gnaf/create_tables.sql | sqlite3 gnaf.sqlite
+cat sql/gnaf/import_data.sql | sqlite3 gnaf.sqlite

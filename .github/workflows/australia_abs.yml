@@ -32,7 +32,7 @@ jobs:
     - name: Create geojson
       run: |
         ./bin/convert_geojson_au_abs
-        mv tmp/AUSLGA.geojson AUSLGA.geojson
+        mv tmp/out.geojson AUSLGA.geojson
         gzip AUSLGA.geojson
         ls -l
     - name: Archive AUS geojson as artifacts

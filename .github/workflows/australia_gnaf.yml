@@ -1,0 +1,88 @@
+name: Generate AU ABS POA
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: 'URL to GNAF data'
+        required: true
+        default: 'https://data.gov.au/data/dataset/19432f89-dc3a-4ef3-b943-5326ef1dbecc/resource/4b084096-65e4-4c8e-abbe-5e54ff85f42f/download/may21_gnaf_pipeseparatedvalue.zip'
+      tag:
+        description: 'Release tag'
+        required: true
+        default: 'GNAF-2021-05'
+
+jobs:
+  checkout_dl:
+    runs-on: ubuntu-latest
+    container: osgeo/gdal:alpine-ultrasmall-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Download
+      id: download
+      env:
+        DL_PATH: ${{github.event.inputs.url}}
+      run: |
+        apk add curl unzip
+        mkdir tmp
+        curl -L $DL_PATH > data.zip
+        unzip tmp/
+        mv *_GNAF_*/G-NAF/G-NAF*/Standard tmp/standard
+        mv *_GNAF_*/G-NAF/G-NAF*/Authority* tmp/authority
+    - name: Create sqlite
+      run: |
+        ./bin/gnaf
+        mv gnaf.sqlite
+        gzip gnaf.sqlite
+        ls -l
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          GNAF.sqlite.gz
+        tag_name: ${{github.event.inputs.tag}}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #   - name: Archive AUS geojson as artifacts
+  #     uses: actions/upload-artifact@v2
+  #     with:
+  #       name: auspoa-geojsonseq
+  #       path: AUSPOA.geojson.gz
+          
+  # mbtiles:
+  #   runs-on: ubuntu-latest
+  #   container: klokantech/tippecanoe
+  #   needs:
+  #     - checkout_dl
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v2
+  #     - name: Download AUS geojson from artifacts
+  #       uses: actions/download-artifact@v2
+  #       with:
+  #         name: auspoa-geojsonseq
+  #     - name: Generate mbtiles
+  #       id: download
+  #       env:
+  #         DL_PATH: ${{github.event.inputs.url}}
+  #       run: |
+  #         ls -l
+  #         gunzip -k AUSPOA.geojson.gz
+  #         tippecanoe -zg -ab -o AUSPOA.mbtiles -l "au_abspoa" -n "ABS Postal Areas" -A "&copy; Australian Bureau of Statistics" --drop-densest-as-needed AUSPOA.geojson
+  #         gzip AUSPOA.mbtiles
+
+  #     - name: Archive AUS mbtiles as artifacts
+  #       uses: actions/upload-artifact@v2
+  #       with:
+  #         name: auspoa-mbtiles
+  #         path: AUSPOA.mbtiles.gz
+
+  #     - name: Release
+  #       uses: softprops/action-gh-release@v1
+  #       with:
+  #         files: |
+  #           AUSPOA.mbtiles.gz
+  #           AUSPOA.geojson.gz
+  #         tag_name: ${{github.event.inputs.tag}}
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
