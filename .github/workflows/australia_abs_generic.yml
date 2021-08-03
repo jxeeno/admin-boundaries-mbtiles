@@ -44,14 +44,14 @@ jobs:
     - name: Create geojson
       run: |
         ./bin/convert_geojson_au_abs
-        mv tmp/out.geojson ${{github.event.inputs.filename}}.geojson
-        gzip ${{github.event.inputs.filename}}.geojson
+        mv tmp/out.geojson ${{github.event.inputs.fname}}.geojson
+        gzip ${{github.event.inputs.fname}}.geojson
         ls -l
     - name: Archive AUS geojson as artifacts
       uses: actions/upload-artifact@v2
       with:
-        name: ${{github.event.inputs.filename}}-geojsonseq
-        path: ${{github.event.inputs.filename}}.geojson.gz
+        name: ${{github.event.inputs.fname}}-geojsonseq
+        path: ${{github.event.inputs.fname}}.geojson.gz
           
   mbtiles:
     runs-on: ubuntu-latest
@@ -64,29 +64,29 @@ jobs:
       - name: Download AUS geojson from artifacts
         uses: actions/download-artifact@v2
         with:
-          name: ${{github.event.inputs.filename}}-geojsonseq
+          name: ${{github.event.inputs.fname}}-geojsonseq
       - name: Generate mbtiles
         id: download
         env:
           DL_PATH: ${{github.event.inputs.url}}
         run: |
           ls -l
-          gunzip -k ${{github.event.inputs.filename}}.geojson.gz
-          tippecanoe -zg -ab -o ${{github.event.inputs.filename}}.mbtiles -l "${{github.event.inputs.lid}}" -n "${{github.event.inputs.lname}}" -A "&copy; Australian Bureau of Statistics" --drop-densest-as-needed ${{github.event.inputs.filename}}.geojson
-          gzip ${{github.event.inputs.filename}}.mbtiles
+          gunzip -k ${{github.event.inputs.fname}}.geojson.gz
+          tippecanoe -zg -ab -o ${{github.event.inputs.fname}}.mbtiles -l "${{github.event.inputs.lid}}" -n "${{github.event.inputs.lname}}" -A "&copy; Australian Bureau of Statistics" --drop-densest-as-needed ${{github.event.inputs.fname}}.geojson
+          gzip ${{github.event.inputs.fname}}.mbtiles
 
       - name: Archive AUS mbtiles as artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: ${{github.event.inputs.filename}}-mbtiles
-          path: ${{github.event.inputs.filename}}.mbtiles.gz
+          name: ${{github.event.inputs.fname}}-mbtiles
+          path: ${{github.event.inputs.fname}}.mbtiles.gz
 
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            ${{github.event.inputs.filename}}.mbtiles.gz
-            ${{github.event.inputs.filename}}.geojson.gz
+            ${{github.event.inputs.fname}}.mbtiles.gz
+            ${{github.event.inputs.fname}}.geojson.gz
           tag_name: ${{github.event.inputs.tag}}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
