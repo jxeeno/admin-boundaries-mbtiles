@@ -1,15 +1,27 @@
-name: Generate AU ABS POA
+name: Generate AU ABS (generic)
 on:
   workflow_dispatch:
     inputs:
       url:
-        description: 'URL to POA data'
+        description: 'URL to ABS data'
         required: true
         default: 'https://www.abs.gov.au/ausstats/subscriber.nsf/log?openagent&1270055003_poa_2016_aust_shape.zip&1270.0.55.003&Data%20Cubes&4FB811FA48EECA7ACA25802C001432D0&0&July%202016&13.09.2016&Previous'
+      fname:
+        description: 'File name'
+        required: true
+        default: 'ABSPOA'
+      lid:
+        description: 'Layer ID'
+        required: true
+        default: 'au_abspoa'
+      lname:
+        description: 'Layer name'
+        required: true
+        default: 'ABS Postal Area'
       tag:
         description: 'Release tag'
         required: true
-        default: 'POA-2016'
+        default: 'ABS-2016'
 
 jobs:
   checkout_dl:
@@ -32,14 +44,14 @@ jobs:
     - name: Create geojson
       run: |
         ./bin/convert_geojson_au_abs
-        mv tmp/out.geojson AUSPOA.geojson
-        gzip AUSPOA.geojson
+        mv tmp/out.geojson ${{github.event.inputs.filename}}.geojson
+        gzip ${{github.event.inputs.filename}}.geojson
         ls -l
     - name: Archive AUS geojson as artifacts
       uses: actions/upload-artifact@v2
       with:
-        name: auspoa-geojsonseq
-        path: AUSPOA.geojson.gz
+        name: ${{github.event.inputs.filename}}-geojsonseq
+        path: ${{github.event.inputs.filename}}.geojson.gz
           
   mbtiles:
     runs-on: ubuntu-latest
@@ -52,29 +64,29 @@ jobs:
       - name: Download AUS geojson from artifacts
         uses: actions/download-artifact@v2
         with:
-          name: auspoa-geojsonseq
+          name: ${{github.event.inputs.filename}}-geojsonseq
       - name: Generate mbtiles
         id: download
         env:
           DL_PATH: ${{github.event.inputs.url}}
         run: |
           ls -l
-          gunzip -k AUSPOA.geojson.gz
-          tippecanoe -zg -ab -o AUSPOA.mbtiles -l "au_abspoa" -n "ABS Postal Areas" -A "&copy; Australian Bureau of Statistics" --drop-densest-as-needed AUSPOA.geojson
-          gzip AUSPOA.mbtiles
+          gunzip -k ${{github.event.inputs.filename}}.geojson.gz
+          tippecanoe -zg -ab -o ${{github.event.inputs.filename}}.mbtiles -l "${{github.event.inputs.lid}}" -n "${{github.event.inputs.lname}}" -A "&copy; Australian Bureau of Statistics" --drop-densest-as-needed ${{github.event.inputs.filename}}.geojson
+          gzip ${{github.event.inputs.filename}}.mbtiles
 
       - name: Archive AUS mbtiles as artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: auspoa-mbtiles
-          path: AUSPOA.mbtiles.gz
+          name: ${{github.event.inputs.filename}}-mbtiles
+          path: ${{github.event.inputs.filename}}.mbtiles.gz
 
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            AUSPOA.mbtiles.gz
-            AUSPOA.geojson.gz
+            ${{github.event.inputs.filename}}.mbtiles.gz
+            ${{github.event.inputs.filename}}.geojson.gz
           tag_name: ${{github.event.inputs.tag}}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
