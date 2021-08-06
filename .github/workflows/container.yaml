@@ -7,8 +7,11 @@
 name: Create and publish a Docker image
 
 on:
-  push:
-    branches: ['main']
+  workflow_dispatch:
+    inputs:
+      url:
+        description: 'Ignore this'
+        required: false
 
 env:
   REGISTRY: ghcr.io
