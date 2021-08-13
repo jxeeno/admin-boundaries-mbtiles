@@ -26,5 +26,6 @@ RUN curl -L https://github.com/jxeeno/admin-boundaries-mbtiles/releases/download
 RUN curl -L https://github.com/jxeeno/admin-boundaries-mbtiles/releases/download/GNAF-2021-05/gnaf.NT.mbtiles.gz | gunzip > tilesets/au/nt_gnaf_point.mbtiles
 RUN curl -L https://github.com/jxeeno/admin-boundaries-mbtiles/releases/download/GNAF-2021-05/gnaf.TAS.mbtiles.gz | gunzip > tilesets/au/tas_gnaf_point.mbtiles
 RUN curl -L https://github.com/jxeeno/admin-boundaries-mbtiles/releases/download/GNAF-2021-05/gnaf.TAS.mbtiles.gz | gunzip > tilesets/au/tas_gnaf_point.mbtiles
+RUN curl -L https://github.com/jxeeno/omt-vector-tiles/releases/download/australia/australia.mbtiles.gz | gunzip > tilesets/au/openmaptiles.mbtiles
 RUN curl -L https://github.com/jxeeno/omt-vector-tiles/releases/download/albania/albania.mbtiles.gz | gunzip > tilesets/test/albania_omt.mbtiles
 ENTRYPOINT ["mbtileserver"]
