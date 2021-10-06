@@ -28,7 +28,7 @@ jobs:
         unzip data.zip
         ls -l
         mkdir tmp
-        mv Localities*/Localities/* tmp/
+        mv Localities/Localities*/* tmp/
     - name: Create geojson
       run: |
         ./bin/convert_geojson_au
