@@ -4,6 +4,7 @@ RUN go get github.com/consbio/mbtileserver
 RUN apk add curl gzip
 RUN mkdir tilesets
 RUN mkdir tilesets/au
+RUN mkdir tilesets/au/asgsed3
 RUN mkdir tilesets/nz
 RUN mkdir tilesets/test
 RUN curl -L https://github.com/jxeeno/admin-boundaries-mbtiles/releases/download/LGA-2020-06/AUSLGA.mbtiles.gz | gunzip > tilesets/au/lga_boundary.mbtiles
@@ -28,4 +29,11 @@ RUN curl -L https://github.com/jxeeno/admin-boundaries-mbtiles/releases/download
 RUN curl -L https://github.com/jxeeno/admin-boundaries-mbtiles/releases/download/GNAF-2021-05/gnaf.TAS.mbtiles.gz | gunzip > tilesets/au/tas_gnaf_point.mbtiles
 RUN curl -L https://github.com/jxeeno/omt-vector-tiles/releases/download/australia14/australia.mbtiles.gz | gunzip > tilesets/au/openmaptiles.mbtiles
 RUN curl -L https://github.com/jxeeno/omt-vector-tiles/releases/download/albania/albania.mbtiles.gz | gunzip > tilesets/test/albania_omt.mbtiles
+RUN curl -L https://github.com/jxeeno/admin-boundaries-mbtiles/releases/download/ABS-2021/ABSPOA.geojson.gz | gunzip > tilesets/au/asgsed3/poa_boundary.mbtiles
+RUN curl -L https://github.com/jxeeno/admin-boundaries-mbtiles/releases/download/ABS-2021/ABSSTE.geojson.gz | gunzip > tilesets/au/asgsed3/ste_boundary.mbtiles
+RUN curl -L https://github.com/jxeeno/admin-boundaries-mbtiles/releases/download/ABS-2021/ABSSA1.geojson.gz | gunzip > tilesets/au/asgsed3/sa1_boundary.mbtiles
+RUN curl -L https://github.com/jxeeno/admin-boundaries-mbtiles/releases/download/ABS-2021/ABSSA2.geojson.gz | gunzip > tilesets/au/asgsed3/sa2_boundary.mbtiles
+RUN curl -L https://github.com/jxeeno/admin-boundaries-mbtiles/releases/download/ABS-2021/ABSSA3.geojson.gz | gunzip > tilesets/au/asgsed3/sa3_boundary.mbtiles
+RUN curl -L https://github.com/jxeeno/admin-boundaries-mbtiles/releases/download/ABS-2021/ABSSA4.geojson.gz | gunzip > tilesets/au/asgsed3/sa4_boundary.mbtiles
+RUN curl -L https://github.com/jxeeno/admin-boundaries-mbtiles/releases/download/ABS-2021/ABSMB.geojson.gz | gunzip > tilesets/au/asgsed3/mb_boundary.mbtiles
 ENTRYPOINT ["mbtileserver"]
