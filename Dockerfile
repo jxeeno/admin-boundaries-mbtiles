@@ -34,4 +34,5 @@ RUN curl -L https://github.com/jxeeno/admin-boundaries-mbtiles/releases/download
 RUN curl -L https://github.com/jxeeno/admin-boundaries-mbtiles/releases/download/ABS-2021/ABSSA3.mbtiles.gz | gunzip > tilesets/au/asgsed3/sa3_boundary.mbtiles
 RUN curl -L https://github.com/jxeeno/admin-boundaries-mbtiles/releases/download/ABS-2021/ABSSA4.mbtiles.gz | gunzip > tilesets/au/asgsed3/sa4_boundary.mbtiles
 RUN curl -L https://github.com/jxeeno/admin-boundaries-mbtiles/releases/download/ABS-2021/ABSMB.mbtiles.gz | gunzip > tilesets/au/asgsed3/mb_boundary.mbtiles
+RUN curl -L https://github.com/jxeeno/omt-vector-tiles/releases/download/australia-tilemaker/australia.mbtiles.gz | gunzip > tilesets/au/omt.mbtiles
 ENTRYPOINT ["mbtileserver"]
