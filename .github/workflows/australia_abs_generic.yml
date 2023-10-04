@@ -55,7 +55,7 @@ jobs:
           
   mbtiles:
     runs-on: ubuntu-latest
-    container: klokantech/tippecanoe
+    container: ghcr.io/jxeeno/admin-boundaries-mbtiles:tippecanoe
     needs:
       - checkout_dl
     steps:
@@ -65,27 +65,27 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: ${{github.event.inputs.fname}}-geojsonseq
-      - name: Generate mbtiles
+      - name: Generate pmtiles
         id: download
         env:
           DL_PATH: ${{github.event.inputs.url}}
         run: |
           ls -l
           gunzip -k ${{github.event.inputs.fname}}.geojson.gz
-          tippecanoe -zg -ab -o ${{github.event.inputs.fname}}.mbtiles -l "${{github.event.inputs.lid}}" -n "${{github.event.inputs.lname}}" -A "&copy; Australian Bureau of Statistics" --drop-densest-as-needed ${{github.event.inputs.fname}}.geojson
-          gzip ${{github.event.inputs.fname}}.mbtiles
+          tippecanoe -zg -pn -o ${{github.event.inputs.fname}}.pmtiles -l "${{github.event.inputs.lid}}" -n "${{github.event.inputs.lname}}" -A "&copy; Australian Bureau of Statistics" --coalesce-densest-as-needed --extend-zooms-if-still-dropping ${{github.event.inputs.fname}}.geojson
+          gzip ${{github.event.inputs.fname}}.pmtiles
 
-      - name: Archive AUS mbtiles as artifacts
+      - name: Archive AUS pmtiles as artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: ${{github.event.inputs.fname}}-mbtiles
-          path: ${{github.event.inputs.fname}}.mbtiles.gz
+          name: ${{github.event.inputs.fname}}-pmtiles
+          path: ${{github.event.inputs.fname}}.pmtiles.gz
 
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            ${{github.event.inputs.fname}}.mbtiles.gz
+            ${{github.event.inputs.fname}}.pmtiles.gz
             ${{github.event.inputs.fname}}.geojson.gz
           tag_name: ${{github.event.inputs.tag}}
         env:
