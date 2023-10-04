@@ -23,6 +23,8 @@ jobs:
       env:
         DL_PATH: ${{github.event.inputs.url}}
       run: |
+        apk update
+        apk upgrade
         apk add curl unzip
         curl $DL_PATH > data.zip
         unzip data.zip
