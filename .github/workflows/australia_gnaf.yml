@@ -52,7 +52,7 @@ jobs:
           
   mbtiles:
     runs-on: ubuntu-latest
-    container: klokantech/tippecanoe
+    container: ghcr.io/jxeeno/admin-boundaries-mbtiles:tippecanoe
     needs:
       - checkout_dl
     steps:
@@ -70,27 +70,27 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: ausgnaf-gpkg
-      - name: Generate mbtiles
+      - name: Generate pmtiles
         id: download
         env:
           DL_PATH: ${{github.event.inputs.url}}
         run: |
           ls -L
-          bin/generate_mbtiles_gnaf ACT &
-          bin/generate_mbtiles_gnaf NT &
-          bin/generate_mbtiles_gnaf TAS &
-          bin/generate_mbtiles_gnaf OT &
-          bin/generate_mbtiles_gnaf NSW &
-          bin/generate_mbtiles_gnaf QLD &
-          bin/generate_mbtiles_gnaf VIC &
-          bin/generate_mbtiles_gnaf SA &
-          bin/generate_mbtiles_gnaf WA &
+          bin/generate_pmtiles_gnaf ACT &
+          bin/generate_pmtiles_gnaf NT &
+          bin/generate_pmtiles_gnaf TAS &
+          bin/generate_pmtiles_gnaf OT &
+          bin/generate_pmtiles_gnaf NSW &
+          bin/generate_pmtiles_gnaf QLD &
+          bin/generate_pmtiles_gnaf VIC &
+          bin/generate_pmtiles_gnaf SA &
+          bin/generate_pmtiles_gnaf WA &
           wait
-      - name: Archive AUS mbtiles as artifacts
+      - name: Archive AUS pmtiles as artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: ausgnaf-mbtiles
-          path: gnaf.*.mbtiles.gz
+          name: ausgnaf-pmtiles
+          path: gnaf.*.pmtiles.gz
 
       - name: Release
         uses: softprops/action-gh-release@v1
@@ -123,15 +123,15 @@ jobs:
             gnaf.VIC.gpkg.gz
             gnaf.SA.gpkg.gz
             gnaf.WA.gpkg.gz
-            gnaf.ACT.mbtiles.gz
-            gnaf.NT.mbtiles.gz
-            gnaf.TAS.mbtiles.gz
-            gnaf.OT.mbtiles.gz
-            gnaf.NSW.mbtiles.gz
-            gnaf.QLD.mbtiles.gz
-            gnaf.VIC.mbtiles.gz
-            gnaf.SA.mbtiles.gz
-            gnaf.WA.mbtiles.gz
+            gnaf.ACT.pmtiles.gz
+            gnaf.NT.pmtiles.gz
+            gnaf.TAS.pmtiles.gz
+            gnaf.OT.pmtiles.gz
+            gnaf.NSW.pmtiles.gz
+            gnaf.QLD.pmtiles.gz
+            gnaf.VIC.pmtiles.gz
+            gnaf.SA.pmtiles.gz
+            gnaf.WA.pmtiles.gz
           tag_name: ${{github.event.inputs.tag}}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

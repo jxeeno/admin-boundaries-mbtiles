@@ -43,7 +43,7 @@ jobs:
           
   mbtiles:
     runs-on: ubuntu-latest
-    container: klokantech/tippecanoe
+    container: ghcr.io/jxeeno/admin-boundaries-mbtiles:tippecanoe
     needs:
       - checkout_dl
     steps:
@@ -53,27 +53,27 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: aus-geojsonseq
-      - name: Generate mbtiles
+      - name: Generate pmtiles
         id: download
         env:
           DL_PATH: ${{github.event.inputs.url}}
         run: |
           ls -l
           gunzip -k AUS.geojson.gz
-          tippecanoe -zg -ab -o AUS.mbtiles -l "localities" -n "Suburbs and localities" -A "&copy; Geoscape Australia (CC BY 4.0)" --drop-densest-as-needed AUS.geojson
-          gzip AUS.mbtiles
+          tippecanoe -zg -ab -o AUS.pmtiles -l "localities" -n "Suburbs and localities" -A "&copy; Geoscape Australia (CC BY 4.0)" --drop-densest-as-needed AUS.geojson
+          gzip AUS.pmtiles
 
-      - name: Archive AUS mbtiles as artifacts
+      - name: Archive AUS pmtiles as artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: aus-mbtiles
-          path: AUS.mbtiles.gz
+          name: aus-pmtiles
+          path: AUS.pmtiles.gz
 
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            AUS.mbtiles.gz
+            AUS.pmtiles.gz
             AUS.geojson.gz
           tag_name: ${{github.event.inputs.tag}}
         env:

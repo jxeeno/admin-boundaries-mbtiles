@@ -42,7 +42,7 @@ jobs:
           
   mbtiles:
     runs-on: ubuntu-latest
-    container: klokantech/tippecanoe
+    container: ghcr.io/jxeeno/admin-boundaries-mbtiles:tippecanoe
     needs:
       - checkout_dl
     steps:
@@ -52,27 +52,27 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: nz-geojsonseq
-      - name: Generate mbtiles
+      - name: Generate pmtiles
         id: download
         env:
           DL_PATH: ${{github.event.inputs.url}}
         run: |
           ls -l
           gunzip -k NZ.geojson.gz
-          tippecanoe -zg -ab -o NZ.mbtiles -l "localities" -n "NZ localities" -A "&copy; Fire and Emergency NZ (CC BY 4.0)" --drop-densest-as-needed NZ.geojson
-          gzip NZ.mbtiles
+          tippecanoe -zg -ab -o NZ.pmtiles -l "localities" -n "NZ localities" -A "&copy; Fire and Emergency NZ (CC BY 4.0)" --drop-densest-as-needed NZ.geojson
+          gzip NZ.pmtiles
 
-      - name: Archive NZ mbtiles as artifacts
+      - name: Archive NZ pmtiles as artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: nz-mbtiles
-          path: NZ.mbtiles.gz
+          name: nz-pmtiles
+          path: NZ.pmtiles.gz
 
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            NZ.mbtiles.gz
+            NZ.pmtiles.gz
             NZ.geojson.gz
           tag_name: ${{github.event.inputs.tag}}
         env:
